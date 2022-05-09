@@ -5,7 +5,7 @@ from kivymd.uix.menu import MDDropdownMenu
 from kivymd.uix.snackbar import Snackbar
 
 
-class Chaos(MDApp):
+class ChaosApp(MDApp):
     def build(self):
         self.title = 'CHAnce Organising System'
 
@@ -21,7 +21,7 @@ class Chaos(MDApp):
             items=menu_items,
             width_mult=4,
         )
-        return Builder.load_file('chaos.kv')
+        return Builder.load_file('chaosui.kv')
 
     def callback(self, button):
         self.menu.caller = button
@@ -32,4 +32,4 @@ class Chaos(MDApp):
         # Snackbar(text=text_item).open()
 
 
-Chaos().run()
+ChaosApp().run()
