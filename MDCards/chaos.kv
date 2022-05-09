@@ -1,13 +1,15 @@
 #:kivy 1.10.0
 
 
-<MyButton@MDRaisedButton>:
+<NextCardButton@MDRaisedButton>:
     size_hint: [0.3, 0.5]
     halign: "left"
     valign: "top"
 
-BoxLayout:
+<EventCardLayout@BoxLayout>:
     orientation: "vertical"
+
+EventCardLayout:
 
     MDToolbar:
         title: "Events"
@@ -30,7 +32,6 @@ BoxLayout:
         font_style: "H4"
         theme_text_color: "Primary"
 
-
     MDLabel:
         text: "Subordinate CR required to cancel order"
         halign: "center"
@@ -42,5 +43,5 @@ BoxLayout:
         anchor_y: 'center'
         adaptive_size: True
 
-        MyButton:
+        NextCardButton:
             text: 'Next'
