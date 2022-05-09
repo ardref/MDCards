@@ -13,6 +13,8 @@ EventCardLayout:
 
     MDToolbar:
         title: "Events"
+        right_action_items: [["menu", lambda x: app.callback(x)]]
+        elevation: 10
 
     MDLabel:
         text: "Order"
@@ -44,4 +46,5 @@ EventCardLayout:
         adaptive_size: True
 
         NextCardButton:
+        # To Do: move button to right.
             text: 'Next'
