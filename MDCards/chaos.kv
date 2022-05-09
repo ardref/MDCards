@@ -1,10 +1,10 @@
 #:kivy 1.10.0
 
 
-<MyButton@MDRoundFlatButton>:
-    size_hint: [None, None]
-    size: [100, 100]
-    halign: "center"
+<MyButton@MDRaisedButton>:
+    size_hint: [0.3, 0.5]
+    halign: "left"
+    valign: "top"
 
 BoxLayout:
     orientation: "vertical"
@@ -37,10 +37,10 @@ BoxLayout:
         font_style: "H5"
         theme_text_color: "Primary"
 
-
     AnchorLayout:
-        anchor_x: 'right'
-        anchor_y: 'bottom'
+        anchor_x: 'center'
+        anchor_y: 'center'
+        adaptive_size: True
 
         MyButton:
             text: 'Next'
