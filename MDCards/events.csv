@@ -1,1 +1,2 @@
-5, "Enemy Spotted!", "Advance towards nearest opponent(s)", "Subordinate CR required to cancel order"
+Weight, Type, Title. Body, Extra
+5, Order, "Enemy Spotted!", "Advance towards nearest opponent(s)", "Subordinate CR required to cancel order"
