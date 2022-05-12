@@ -2,8 +2,8 @@
 
 
 <NextCardButton@MDRaisedButton>:
-    size_hint: [None, None]
-    size: [100, 100]
+    size_hint: [.2, .2]
+    # size: [100, 100]
   
 <EventCardLayout@BoxLayout>:
     orientation: "vertical"
@@ -25,20 +25,14 @@
 EventCardLayout:
 
     MDToolbar:
-        title: "Events"
+        title: "Order"
         right_action_items: [["menu", lambda x: app.callback(x)]]
         elevation: 10
 
     MDLabel:
-        text: "Order"
-        halign: "center"
-        font_style: "H2"
-        theme_text_color: "Secondary"
-
-    MDLabel:
         text: "Enemy Spotted!"
         halign: "center"
-        font_style: "H3"
+        font_style: "H2"
         theme_text_color: "Primary"
 
     MDLabel:

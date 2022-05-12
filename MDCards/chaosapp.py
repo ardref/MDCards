@@ -2,7 +2,6 @@ from kivymd.app import MDApp
 from kivy.lang import Builder
 from kivy.metrics import dp
 from kivymd.uix.menu import MDDropdownMenu
-from kivymd.uix.snackbar import Snackbar
 
 
 class ChaosApp(MDApp):
@@ -15,7 +14,7 @@ class ChaosApp(MDApp):
                 "text": f"{item}",
                 "height": dp(56),
                 "on_release": lambda x=f"{item}": self.menu_callback(x),
-             } for item in ('Import', 'Shuffle', 'Reset', 'Abort')
+             } for item in ('Import', 'Shuffle', 'Reset', 'About')
         ]
         self.menu = MDDropdownMenu(
             items=menu_items,
