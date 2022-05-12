@@ -22,8 +22,11 @@ class ChaosApp(MDApp):
 
         self.deck.clear()
         with open(CSV_FILE, newline='') as csvfile:
-            reader = csv.reader(csvfile)
-            for row in reader:
+
+            # Ignore first row - Header.
+            rows = list(csv.reader(csvfile))[1:]
+
+            for row in rows:
                 self.deck.append(row)
 
     def shuffle(self):
