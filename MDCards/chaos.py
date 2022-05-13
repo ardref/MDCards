@@ -6,7 +6,7 @@ from kivymd.uix.menu import MDDropdownMenu
 import csv
 import random
 
-CSV_FILE = 'events.csv'
+CSV_FILE = 'chaos.csv'
 
 class ChaosApp(MDApp):
     """ Kivy app to manage Event Card Deck """
@@ -20,6 +20,9 @@ class ChaosApp(MDApp):
     def readcsv(self):
         """ Populate Event deck from CSV file """
 
+        print('self.kv_directory')
+        print(self.kv_directory)
+        return
         self.deck.clear()
         with open(CSV_FILE, newline='') as csvfile:
 
@@ -48,7 +51,7 @@ class ChaosApp(MDApp):
             items=menu_items,
             width_mult=4,
         )
-        return Builder.load_file('chaosui.kv')
+        return
 
     def callback(self, button):
         self.menu.caller = button
