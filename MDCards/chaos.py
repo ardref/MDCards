@@ -1,13 +1,10 @@
 from kivymd.app import MDApp
-from kivy.lang import Builder
-from kivy.metrics import dp
-from kivymd.uix.menu import MDDropdownMenu
 
 import csv
 import random
-import os
 
 CSV_FILE = 'chaos.csv'
+
 
 class ChaosApp(MDApp):
     """ Kivy app to manage 'Event Cards' """
@@ -23,7 +20,6 @@ class ChaosApp(MDApp):
 
         self.deck.clear()
         with open(CSV_FILE, newline='') as csvfile:
-
             # Ignore first row - Header.
             rows = list(csv.reader(csvfile))[1:]
 
@@ -38,16 +34,8 @@ class ChaosApp(MDApp):
         self.title = 'CHAnce Organising System'
 
         config = self.config
-        
+
         return
-
-    def callback(self, button):
-        self.menu.caller = button
-        self.menu.open()
-
-    def menu_callback(self, text_item):
-        self.menu.dismiss()
-        # Snackbar(text=text_item).open()
 
 
 ChaosApp().run()
