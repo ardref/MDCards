@@ -1,21 +1,23 @@
 from kivymd.app import MDApp
-import configparser
+from os.path import exists
 
 import csv
 import random
+import shutil
 
-# N.B.: Kivy's own Config parser may be required in deployment, instead of the local .ini file.
-INI_FILE = 'chaos.ini'
+# CSV file. Default (reset) is preceded by a '.'
+CSV_FILE = 'chaos.csv'
+
 
 class ChaosApp(MDApp):
     """ Kivy app to manage 'Event Cards' """
 
     def __init__(self, **kwargs):
+        """ CSV file is created if it does not yet exist """
         super().__init__(**kwargs)
 
-        config = configparser.ConfigParser()
-        config.read(INI_FILE)
-        self.csv_file = config.get('User', 'CSV_FILE')
+        if not exists(CSV_FILE):
+            shutil.copyfile('.' + CSV_FILE, CSV_FILE)
 
         self.deck = list()
 
@@ -24,7 +26,7 @@ class ChaosApp(MDApp):
 
         self.deck.clear()
 
-        with open(self.csv_file, newline='') as csvfile:
+        with open(CSV_FILE, newline='') as csvfile:
             # Ignore first row - Header.
             rows = list(csv.reader(csvfile))[1:]
 
