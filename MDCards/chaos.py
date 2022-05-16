@@ -1,12 +1,55 @@
 from kivymd.app import MDApp
+from kivy.uix.widget import Widget
+from kivy.uix.popup import Popup
+from kivy.uix.floatlayout import FloatLayout
+from kivy.properties import ObjectProperty
+from kivy.lang import Builder
+from kivy.logger import Logger, LOG_LEVELS
+
 from os.path import exists
 
 import csv
 import random
 import shutil
 
+
+Logger.setLevel(LOG_LEVELS["debug"])
+
+Logger.info('ChaosApp: This is a info message.')
+Logger.debug('ChaosApp: This is a debug message.')
+
+# TODO: Fill values in .kv 'card'
+
 # CSV file. Default (reset) is preceded by a '.'
 CSV_FILE = 'chaos.csv'
+
+
+class LoadDialog(FloatLayout):
+    load = ObjectProperty(None)
+    cancel = ObjectProperty(None)
+
+
+class EventCard(FloatLayout):
+    load = ObjectProperty(None)
+    cancel = ObjectProperty(None)
+
+    def __init__(self, **kwargs):
+        super().__init__()
+        self._popup = None
+
+    def show_load_list(self):
+        content = LoadDialog(load=self.load_list, cancel=self.dismiss_popup)
+        self._popup = Popup(title="Load a file list", content=content, size_hint=(1, 1))
+        self._popup.open()
+
+    def load_list(self, path, filename):
+        pass
+
+    def dismiss_popup(self):
+        self._popup.dismiss()
+
+    def selected(self, filename):
+        self.ids.header.text = filename[0]
 
 
 class ChaosApp(MDApp):
