@@ -40,6 +40,7 @@ class EventCard(FloatLayout):
     def show_load_list(self):
         content = LoadDialog(load=self.load_list, cancel=self.dismiss_popup)
         self._popup = Popup(title="Load a file list", content=content, size_hint=(1, 1))
+        # self.ids.header.text = 'TEST'
         self._popup.open()
 
     def load_list(self, path, filename):
