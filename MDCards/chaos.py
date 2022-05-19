@@ -37,17 +37,17 @@ class EventCard(FloatLayout):
         super().__init__()
         self._popup = None
 
-    def show_load_list(self):
-        content = LoadDialog(load=self.load_list, cancel=self.dismiss_popup)
-        self._popup = Popup(title="Load a file list", content=content, size_hint=(1, 1))
-        # self.ids.header.text = 'TEST'
-        self._popup.open()
+    # def show_load_list(self):
+    #     content = LoadDialog(load=self.load_list, cancel=self.dismiss_popup)
+    #     self._popup = Popup(title="Load a file list", content=content, size_hint=(1, 1))
+    #     # self.ids.header.text = 'TEST'
+    #     self._popup.open()
 
     def load_list(self, path, filename):
         pass
 
-    def dismiss_popup(self):
-        self._popup.dismiss()
+    # def dismiss_popup(self):
+    #     self._popup.dismiss()
 
     def selected(self, filename):
         self.ids.header.text = filename[0]

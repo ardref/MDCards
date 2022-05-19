@@ -1,11 +1,30 @@
 #:kivy 1.10.0
 
 #:import Factory kivy.factory.Factory
+
+
 <MyPopup@Popup>:
-    auto_dismiss: False
-    Button:
-        text: 'Close me!'
-        on_release: root.dismiss()
+#    auto_dismiss: True
+    id: popup
+    title: "Import"
+
+    FileChooserListView:
+        id: filechooser
+        path: './'
+
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+            Button:
+                text: "Cancel"
+                #on_press = lambda *args: self.popup_exit.dismiss()
+                on_release: print(root.ids)
+
+            Button:
+                text: "Load"
+                on_release: root.load_list(filechooser.path, filechooser.selection)
+
+    #size: .5 * root.width, .5 * root.height
 
 <NextCardButton@MDRaisedButton>:
     size_hint: [.2, .2]
@@ -24,10 +43,10 @@
     # To Do: move button to right.
         text: 'Next'
         size: .5 * self.parent.width, .5 * self.parent.height
-        on_release: Factory.MyPopup().open()
+        #on_release: Factory.MyPopup().open()
 
 
-
+# Root of UI, referenced in py code.
 EventCard:
 
     BoxLayout:
@@ -40,7 +59,7 @@ EventCard:
             id: toolbar
             title: "Order"
             elevation: 10
-            right_action_items: [['import', lambda x: root.show_load_list()]]
+            right_action_items: [['import', lambda x: Factory.MyPopup().open()]]
 
         MDLabel
             id: header
@@ -64,21 +83,3 @@ EventCard:
             theme_text_color: "Primary"
 
         EventBottomLayout:
-
-<LoadDialog>:
-    BoxLayout:
-        size: .5 * self.parent.width, .5 * self.parent.height
-        #pos: root.pos * .4
-        orientation: "vertical"
-        FileChooserListView:
-            id: filechooser
-            path: './'
-        BoxLayout:
-            size_hint_y: None
-            height: 30
-            Button:
-                text: "Cancel"
-                on_release: root.cancel()
-            Button:
-                text: "Load"
-                on_release: root.load(filechooser.path, filechooser.selection)
