@@ -1,30 +1,24 @@
 #:kivy 1.10.0
 
-#:import Factory kivy.factory.Factory
 
-
-<MyPopup@Popup>:
-#    auto_dismiss: True
-    id: popup
-    title: "Import"
-
-    FileChooserListView:
-        id: filechooser
-        path: './'
+<LoadDialog>:
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        FileChooserListView:
+            id: filechooser
 
         BoxLayout:
             size_hint_y: None
             height: 30
             Button:
                 text: "Cancel"
-                #on_press = lambda *args: self.popup_exit.dismiss()
-                on_release: print(app, root.ids)
+                on_release: root.cancel()
 
             Button:
                 text: "Load"
-                on_release: root.load_list(filechooser.path, filechooser.selection)
-
-    #size: .5 * root.width, .5 * root.height
+                on_release: root.load(filechooser.path, filechooser.selection)
 
 <NextCardButton@MDRaisedButton>:
     size_hint: [.2, .2]
@@ -59,7 +53,7 @@ EventCard:
             id: toolbar
             title: "Order"
             elevation: 10
-            right_action_items: [['import', lambda x: Factory.MyPopup().open()]]
+            right_action_items: [['import', lambda x: root.show_load()]]
 
         MDLabel
             id: header

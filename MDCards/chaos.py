@@ -1,13 +1,13 @@
 from kivymd.app import MDApp
-from kivy.uix.widget import Widget
+from kivy.factory import Factory
 from kivy.uix.popup import Popup
 from kivy.uix.floatlayout import FloatLayout
 from kivy.properties import ObjectProperty
-from kivy.lang import Builder
 from kivy.logger import Logger, LOG_LEVELS
 
 from os.path import exists
 
+import os
 import csv
 import random
 import shutil
@@ -30,24 +30,28 @@ class LoadDialog(FloatLayout):
 
 
 class EventCard(FloatLayout):
-    load = ObjectProperty(None)
-    cancel = ObjectProperty(None)
+    loadfile = ObjectProperty(None)
+    text_input = ObjectProperty(None)
 
     def __init__(self, **kwargs):
         super().__init__()
         self._popup = None
 
-    # def show_load_list(self):
-    #     content = LoadDialog(load=self.load_list, cancel=self.dismiss_popup)
-    #     self._popup = Popup(title="Load a file list", content=content, size_hint=(1, 1))
-    #     # self.ids.header.text = 'TEST'
-    #     self._popup.open()
+    def dismiss_popup(self):
+        self._popup.dismiss()
 
-    def load_list(self, path, filename):
-        pass
+    def show_load(self):
+        content = LoadDialog(load=self.load, cancel=self.dismiss_popup)
+        self._popup = Popup(title="Load file", content=content,
+                            size_hint=(0.6, 0.6))
+        self._popup.open()
 
-    # def dismiss_popup(self):
-    #     self._popup.dismiss()
+    def load(self, path, filename):
+        with open(os.path.join(path, filename[0])) as stream:
+            pass
+            self.text_input.text = stream.read()
+
+        self.dismiss_popup()
 
     def selected(self, filename):
         self.ids.header.text = filename[0]
@@ -89,4 +93,9 @@ class ChaosApp(MDApp):
         return
 
 
-ChaosApp().run()
+Factory.register('EventCard', cls=EventCard)
+Factory.register('LoadDialog', cls=LoadDialog)
+
+
+if __name__ == '__main__':
+    ChaosApp().run()
