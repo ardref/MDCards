@@ -1,17 +1,28 @@
-# MDCards
-Python/Kivy Event Card app (CHAOS)
-
-## Overview
+# CHance Organising System (CHAOS)
 A 'virtual Event Deck', for use in wargames.
 
-Each deck is user-defined, via a CSV file.
+## Overview
+- Each deck is user-defined, via a CSV file.
+- Hidden CSV file acts a 'deck database'
+
+## Card Layout
+- Title ('Type')
+- Header
+- Body
+- Extra
+
+## Text Parameters (CSV)
+- Card Count - based on unique Type (e.g. 'Red Flag')
 
 ## Operation
 ### Load CSV 'Event Deck' file.
 Click on top RH icon to show File Chooser pop-up.
 
-On Load, the current deck will be replaced.
+On Load, the current deck (hidden file) will be replaced.
 
+### Buttons
+- Footer: Back, Next navigation.
+- Delete: Remove card from deck.
 
 ## CSV file format
 1. Weight: number of (card) Type in deck.
@@ -20,6 +31,10 @@ On Load, the current deck will be replaced.
 3. Header: title of card etc.
 4. Body: main text
 5. Extra: additional information
-6. Action Code: key paired to an action - shuffle(), for example.
+6. Action Code: key paired to an action
+   1. Shuffle
+   2. Count
+   3. Delete - remove card from deck
+
 
 

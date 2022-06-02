@@ -25,11 +25,13 @@ CSV_FILE = 'chaos.csv'
 
 
 class LoadDialog(FloatLayout):
+    """ <LoadDialog> Class Rule in KV file """
     load = ObjectProperty(None)
     cancel = ObjectProperty(None)
 
 
 class EventCard(FloatLayout):
+    """ EventCard Root Rule in KV file """
     loadfile = ObjectProperty(None)
     text_input = ObjectProperty(None)
 
@@ -70,7 +72,7 @@ class ChaosApp(MDApp):
         self.deck = list()
 
     def read_csv(self):
-        """ Populate Event deck from CSV file """
+        """ Populate Event deck from hidden CSV file """
 
         self.deck.clear()
 
