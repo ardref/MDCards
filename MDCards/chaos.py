@@ -22,10 +22,10 @@ Logger.debug('ChaosApp: This is a debug message.')
 
 # CSV file. Default (reset) is preceded by a '.'
 CSV_FILE = '.chaos.csv'
-CSV_INIT = """1, CHAOS, Event Deck, Choose CSV File to Build Deck, Use 'Nav Bar' below: Back, Forward
-"""
+CSV_HDR = ['Weight', 'Header', 'Title', 'Body', 'Extra']
+CSV_INIT = ['1', 'CHAOS', 'Event Deck', 'Choose CSV File to Build Deck', 'Nav Bar: Back, Shuffle, Forward']
 
-Fields = namedtuple('CSV_Header', 'Weight, Header, Title, Body, Extra')
+Fields = namedtuple('CSV_Header', CSV_HDR)
 
 
 class LoadDialog(FloatLayout):
@@ -74,7 +74,8 @@ class ChaosApp(MDApp):
         if not exists(CSV_FILE):
             with open(CSV_FILE, 'w') as f:
                 writer = csv.writer(f)
-                writer.writerows(CSV_INIT)
+                writer.writerow(CSV_HDR)
+                writer.writerow(CSV_INIT)
 
         self.deck = list()
 

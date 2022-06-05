@@ -1,2 +1,2 @@
-Weight, Type, Header, Body, Extra
-0, About, Event Deck, Choose CSV File to Build Deck, Use 'Nav Bar' below: Back, Shuffle, Forward
+Weight,Header,Title,Body,Extra
+1,CHAOS,Event Deck,Choose CSV File to Build Deck,"Nav Bar: Back, Shuffle, Forward"
