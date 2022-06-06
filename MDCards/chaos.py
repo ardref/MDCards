@@ -25,6 +25,7 @@ CSV_FILE = '.chaos.csv'
 CSV_HDR = ['Weight', 'Header', 'Title', 'Body', 'Extra']
 CSV_INIT = ['1', 'CHAOS', 'Event Deck', 'Choose CSV File to Build Deck', 'Nav Bar: Back, Shuffle, Forward']
 
+CSVFile = namedtuple('CSV_File', ['header', 'data'])
 Fields = namedtuple('CSV_Header', CSV_HDR)
 
 
@@ -51,13 +52,22 @@ class EventCard(FloatLayout):
         self._popup.open()
 
     def load(self, path, filename):
-        # TODO: Update hidden file.
         """ Validate CSV file, then save data to hidden file """
+
         if len(filename) > 0:
-            with open(os.path.join(path, filename[0])) as stream:
-                rows = stream.read()
-                if not csv.Sniffer().has_header(rows):
-                    raise Exception("Header row not found in CSV file.")
+            csv.register_dialect('reader', skipinitialspace=True)
+
+            with open(filename[0]) as f:
+                header, *data = csv.reader(f, dialect="reader")
+                if header != CSV_HDR:
+                    raise ValueError("Invalid CSV file (Header)")
+
+            with open(CSV_FILE, 'w') as f:
+                writer = csv.writer(f)
+                writer.writerow(header)
+                for row in data:
+                    writer.writerow(row)
+
         self.dismiss_popup()
 
     def selected(self, filename):
@@ -84,9 +94,8 @@ class ChaosApp(MDApp):
 
         self.deck.clear()
 
-        with open(CSV_FILE) as csvfile:
-            # Ignore first row - Header.
-            reader = csv.DictReader(csvfile)
+        with open(CSV_FILE) as f:
+            reader = csv.DictReader(f)
 
             for row in reader:
                 weight = int(row['Weight'])
