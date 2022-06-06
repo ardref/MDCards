@@ -5,13 +5,10 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.properties import ObjectProperty
 from kivy.logger import Logger, LOG_LEVELS
 from collections import namedtuple
-from os.path import exists
 
-import os
 import csv
 import random
-import shutil
-
+import os.path
 
 Logger.setLevel(LOG_LEVELS["debug"])
 
@@ -27,6 +24,29 @@ CSV_INIT = ['1', 'CHAOS', 'Event Deck', 'Choose CSV File to Build Deck', 'Nav Ba
 
 CSVFile = namedtuple('CSV_File', ['header', 'data'])
 Fields = namedtuple('CSV_Header', CSV_HDR)
+
+
+def csv_read(pathname):
+    """ Read/Validate CSV file - then return header, data rows """
+
+    csv.register_dialect('reader', skipinitialspace=True)
+
+    with open(pathname) as f:
+        header, *data = csv.reader(f, dialect="reader")
+        if header != CSV_HDR:
+            raise ValueError("Invalid CSV file (Header)")
+
+    return header, data
+
+
+def csv_write(header, data, pathname):
+    """ Write header and data rows as CSV file """
+
+    with open(pathname, 'w') as f:
+        writer = csv.writer(f)
+        writer.writerow(header)
+        for row in data:
+            writer.writerow(row)
 
 
 class LoadDialog(FloatLayout):
@@ -51,22 +71,13 @@ class EventCard(FloatLayout):
         self._popup = Popup(title="Load file", content=content, size_hint=(0.6, 0.6))
         self._popup.open()
 
-    def load(self, path, filename):
+    def load(self, directory, filename):
         """ Validate CSV file, then save data to hidden file """
 
-        if len(filename) > 0:
-            csv.register_dialect('reader', skipinitialspace=True)
-
-            with open(filename[0]) as f:
-                header, *data = csv.reader(f, dialect="reader")
-                if header != CSV_HDR:
-                    raise ValueError("Invalid CSV file (Header)")
-
-            with open(CSV_FILE, 'w') as f:
-                writer = csv.writer(f)
-                writer.writerow(header)
-                for row in data:
-                    writer.writerow(row)
+        pathname = os.path.join(directory, filename[0])
+        if len(pathname) > 0:
+            header, data = csv_read(pathname)
+            csv_write(header, data, CSV_FILE)
 
         self.dismiss_popup()
 
@@ -81,24 +92,24 @@ class ChaosApp(MDApp):
         super().__init__(**kwargs)
 
         # CSV file is created if it does not yet exist.
-        if not exists(CSV_FILE):
-            with open(CSV_FILE, 'w') as f:
-                writer = csv.writer(f)
-                writer.writerow(CSV_HDR)
-                writer.writerow(CSV_INIT)
+        if not os.path.exists(CSV_FILE):
+            csv_write(CSV_HDR, CSV_INIT, CSV_FILE)
 
         self.deck = list()
 
-    def read_csv(self):
+    def build_deck(self):
         """ Populate Event deck from hidden CSV file """
 
         self.deck.clear()
 
-        with open(CSV_FILE) as f:
-            reader = csv.DictReader(f)
+        header, data = csv_read(CSV_FILE)
 
-            for row in reader:
-                weight = int(row['Weight'])
+        for row in data:
+            weight = int(row[0])
+
+            # Add number of duplicate cards, according to 'Weight'.
+            for n in range(weight):
+                self.deck.append(row[1:])
 
     def shuffle(self):
         # N.B.: This method changes the original list, it does not return a new list.
@@ -107,7 +118,7 @@ class ChaosApp(MDApp):
     def build(self):
         self.title = 'CHAnce Organising System'
 
-        self.read_csv()
+        self.build_deck()
 
         return
 
