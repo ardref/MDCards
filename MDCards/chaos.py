@@ -2,9 +2,10 @@ from kivymd.app import MDApp
 from kivy.factory import Factory
 from kivy.uix.popup import Popup
 from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.anchorlayout import AnchorLayout
 from kivy.properties import ObjectProperty
 from kivy.logger import Logger, LOG_LEVELS
-from collections import namedtuple
+from dataclasses import dataclass
 
 import csv
 import random
@@ -17,13 +18,54 @@ Logger.debug('ChaosApp: This is a debug message.')
 
 # TODO: Fill values in .kv 'card'
 
-# CSV file. Default (reset) is preceded by a '.'
-CSV_FILE = '.chaos.csv'
-CSV_HDR = ['Weight', 'Header', 'Title', 'Body', 'Extra']
-CSV_INIT = ['1', 'CHAOS', 'Event Deck', 'Choose CSV File to Build Deck', 'Nav Bar: Back, Shuffle, Forward']
+CSV_FILE = ".chaos.csv"
+CSV_HDR = ('Weight', 'Toolbar', 'Title', 'Body', 'Extra')
+CSV_INIT = [['1', 'CHAOS', 'Event Deck', 'Choose CSV File to Build Deck', 'Nav Bar: Back, Shuffle, Forward']]
 
-CSVFile = namedtuple('CSV_File', ['header', 'data'])
-Fields = namedtuple('CSV_Header', CSV_HDR)
+@dataclass
+class Card:
+    weight: int
+    toolbar: str
+    title: str
+    body: str
+    extra: str
+
+
+# Card deck.
+class Deck(list):
+
+    def __init__(self):
+        super().__init__()
+        self.index = -1
+
+    def forward(self):
+        self.index += 1
+        yield self[self.index]
+
+    def backward(self):
+        if self.index > 0:
+            self.index -= 1
+        yield self[self.index]
+
+    def shuffle(self):
+        random.shuffle(self)
+
+    def build_deck(self):
+        """ Populate Event deck from hidden CSV file """
+
+        self.clear()
+
+        header, data = csv_read(CSV_FILE)
+
+        for row in data:
+            weight = int(row[0])
+
+            # Add number of duplicate cards, according to 'Weight'.
+            for n in range(weight):
+                self.append(row)
+
+
+deck = Deck()
 
 
 def csv_read(pathname):
@@ -33,7 +75,7 @@ def csv_read(pathname):
 
     with open(pathname) as f:
         header, *data = csv.reader(f, dialect="reader")
-        if header != CSV_HDR:
+        if tuple(header) != CSV_HDR:
             raise ValueError("Invalid CSV file (Header)")
 
     return header, data
@@ -55,9 +97,13 @@ class LoadDialog(FloatLayout):
     cancel = ObjectProperty(None)
 
 
-class EventCard(FloatLayout):
-    """ EventCard Root Rule in KV file """
-    text_input = ObjectProperty(None)
+class EventCardLayout(FloatLayout):
+    """ Root Rule in KV file """
+
+    toolbar = ObjectProperty(None)
+    title = ObjectProperty(None)
+    body = ObjectProperty(None)
+    extra = ObjectProperty(None)
 
     def __init__(self, **kwargs):
         super().__init__()
@@ -66,7 +112,7 @@ class EventCard(FloatLayout):
     def dismiss_popup(self):
         self._popup.dismiss()
 
-    def show_load(self):
+    def load_dialog(self):
         content = LoadDialog(load=self.load, cancel=self.dismiss_popup)
         self._popup = Popup(title="Load file", content=content, size_hint=(0.6, 0.6))
         self._popup.open()
@@ -79,10 +125,9 @@ class EventCard(FloatLayout):
             header, data = csv_read(pathname)
             csv_write(header, data, CSV_FILE)
 
-        self.dismiss_popup()
+        self.show_card()
 
-    def selected(self, filename):
-        self.ids.header.text = filename[0]
+        self.dismiss_popup()
 
 
 class ChaosApp(MDApp):
@@ -95,35 +140,29 @@ class ChaosApp(MDApp):
         if not os.path.exists(CSV_FILE):
             csv_write(CSV_HDR, CSV_INIT, CSV_FILE)
 
-        self.deck = list()
-
-    def build_deck(self):
-        """ Populate Event deck from hidden CSV file """
-
-        self.deck.clear()
-
-        header, data = csv_read(CSV_FILE)
-
-        for row in data:
-            weight = int(row[0])
-
-            # Add number of duplicate cards, according to 'Weight'.
-            for n in range(weight):
-                self.deck.append(row[1:])
-
-    def shuffle(self):
-        # N.B.: This method changes the original list, it does not return a new list.
-        random.shuffle(self.deck)
+        deck.clear()
 
     def build(self):
         self.title = 'CHAnce Organising System'
 
-        self.build_deck()
+        deck.build_deck()
 
         return
 
+    def next_card(self):
+        deck.forward()
+        self.show_card(deck.index)
 
-Factory.register('EventCard', cls=EventCard)
+    def show_card(self, index=0):
+        card = deck[index]
+
+        self.root.toolbar.title = card[0]
+        self.root.title.text = card[1]
+        self.root.body.text = card[2]
+        self.root.extra.text = card[3]
+
+
+Factory.register('EventCard', cls=EventCardLayout)
 Factory.register('LoadDialog', cls=LoadDialog)
 
 
