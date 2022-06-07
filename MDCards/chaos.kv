@@ -8,6 +8,7 @@
         orientation: "vertical"
         FileChooserListView:
             id: filechooser
+            filters: ['*.csv']
 
         BoxLayout:
             size_hint_y: None
@@ -37,11 +38,16 @@
     # To Do: move button to right.
         text: 'Next'
         size: .5 * self.parent.width, .5 * self.parent.height
-        #on_release: Factory.MyPopup().open()
+        on_release: app.next_card()
 
 
 # Root of UI, referenced in py code.
-EventCard:
+EventCardLayout:
+
+    toolbar: toolbar
+    title: title
+    body: body
+    extra: extra
 
     BoxLayout:
         orientation: "vertical"
@@ -51,27 +57,27 @@ EventCard:
 
         MDToolbar:
             id: toolbar
-            title: "Order"
+            title: "Toolbar"
             elevation: 10
-            right_action_items: [['import', lambda x: root.show_load()]]
+            right_action_items: [['import', lambda x: root.load_dialog()]]
 
         MDLabel
-            id: header
-            text: "Enemy Spotted!"
+            id: title
+            text: "Title"
             halign: "center"
             font_style: "H2"
             theme_text_color: "Primary"
 
         MDLabel:
             id: body
-            text: "Advance towards nearest opponent(s)"
+            text: "Body"
             halign: "center"
             font_style: "H4"
             theme_text_color: "Primary"
 
         MDLabel:
             id: extra
-            text: "Subordinate CR required to cancel order"
+            text: "Extra"
             halign: "center"
             font_style: "H5"
             theme_text_color: "Primary"
