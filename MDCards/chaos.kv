@@ -38,7 +38,7 @@
     # To Do: move button to right.
         text: 'Next'
         size: .5 * self.parent.width, .5 * self.parent.height
-        on_release: app.next_card()
+        on_release: app.root.show_card()
 
 
 # Root of UI, referenced in py code.
@@ -83,3 +83,4 @@ EventCardLayout:
             theme_text_color: "Primary"
 
         EventBottomLayout:
+            id: footer
