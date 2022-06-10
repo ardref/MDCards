@@ -12,46 +12,6 @@ CSV_INIT = [['1', 'CHAOS', 'Event Deck', 'Choose CSV File to Build Deck', 'Nav B
 # Card deck.
 class Deck(list):
 
-    def __init__(self):
-        super().__init__()
-        self.index = -1
-
-        # CSV file is created if it does not yet exist.
-        if not os.path.exists(CSV_FILE):
-            self.csv_write(CSV_HDR._fields, CSV_INIT, CSV_FILE)
-
-    def forward(self):
-        self.index += 1
-        return self[self.index]
-
-    def backward(self):
-        if self.index > 0:
-            self.index -= 1
-        return self[self.index]
-
-    def shuffle(self):
-        random.shuffle(self)
-
-    def build_deck(self):
-        """ Populate Event deck from hidden CSV file """
-
-        self.clear()
-
-        header, data = self.csv_read(CSV_FILE)
-
-        for row in data:
-            weight = int(row[0])
-
-            # Add number of duplicate cards, according to 'Weight'.
-            for n in range(weight):
-                self.append(row)
-
-    def get_card(self, index=None):
-
-        index = self.index if not index else index
-
-        return CSV_HDR(*self[index])
-
     @staticmethod
     def csv_write(header, data, pathname):
         """ Write header and data rows as CSV file """
@@ -75,10 +35,59 @@ class Deck(list):
 
         return header, data
 
+    def __init__(self):
+        super().__init__()
+        self.index = 0
+
+        # Hidden CSV file is created if it does not yet exist.
+        if not os.path.exists(CSV_FILE):
+            self.reset()
+
+    def reset(self):
+        self.clear()
+        self.csv_write(CSV_HDR._fields, CSV_INIT, CSV_FILE)
+
+    def forward(self):
+        self.index += 1
+        return self[self.index]
+
+    def backward(self):
+        if self.index > 0:
+            self.index -= 1
+        return self[self.index]
+
+    def shuffle(self):
+        random.shuffle(self)
+
+    def build_deck(self):
+        """ Populate Event deck from hidden CSV file """
+
+        self.reset()
+
+        header, data = self.csv_read(CSV_FILE)
+
+        for row in data:
+            weight = int(row[0])
+
+            # Add number of duplicate cards, according to 'Weight'.
+            for n in range(weight):
+                self.append(row)
+
+    def get_card(self, index=None):
+
+        index = self.index if not index else index
+
+        return CSV_HDR(*self[index])
+
     def load(self, pathname):
-        """ Validate CSV file, then save data to hidden file """
+        """ Load CSV file, then save data to hidden file """
         header, data = self.csv_read(pathname)
         self.csv_write(header, data, CSV_FILE)
+
+        # Refresh deck.
+        self.build_deck()
+
+        return
 
 
 deck = Deck()

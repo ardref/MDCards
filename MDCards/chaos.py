@@ -46,10 +46,10 @@ class EventCardLayout(FloatLayout):
 
         self.dismiss_popup()
 
-        # Display deck's cover card.
         self.show_card(0)
 
     def show_card(self, index=None):
+        """ Display given card. """
 
         card = deck.get_card(index)
 
@@ -69,6 +69,8 @@ class ChaosApp(MDApp):
         self.title = 'CHAnce Organising System'
 
         deck.build_deck()
+
+        self.root.show_card()
 
         return
 
