@@ -38,11 +38,11 @@
     # To Do: move button to right.
         text: 'Next'
         size: .5 * self.parent.width, .5 * self.parent.height
-        on_release: app.root.show_card()
+        on_release: app.root.forward()
 
 
 # Root of UI, referenced in py code.
-EventCardLayout:
+EventCard:
 
     toolbar: toolbar
     title: title

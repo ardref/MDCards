@@ -19,7 +19,7 @@ class LoadDialog(FloatLayout):
     cancel = ObjectProperty(None)
 
 
-class EventCardLayout(FloatLayout):
+class EventCard(FloatLayout):
     """ Root Rule in KV file """
 
     toolbar = ObjectProperty(None)
@@ -43,15 +43,23 @@ class EventCardLayout(FloatLayout):
         pathname = os.path.join(directory, filename[0])
         if len(pathname) > 0:
             deck.load(pathname)
+            self.show_card()
 
         self.dismiss_popup()
 
-        self.show_card(0)
+    def forward(self):
+        card = deck.forward()
+        self.show_card(card)
 
-    def show_card(self, index=None):
-        """ Display given card. """
+    def backward(self):
+        card = deck.backward()
+        self.show_card(card)
 
-        card = deck.get_card(index)
+    def show_card(self, card=None):
+        """ Display given card; default is top card """
+
+        if card is None:
+            card = deck.get_card(0)
 
         self.toolbar.title = card.Toolbar
         self.title.text = card.Title
@@ -75,7 +83,7 @@ class ChaosApp(MDApp):
         return
 
 
-Factory.register('EventCard', cls=EventCardLayout)
+Factory.register('EventCard', cls=EventCard)
 Factory.register('LoadDialog', cls=LoadDialog)
 
 
