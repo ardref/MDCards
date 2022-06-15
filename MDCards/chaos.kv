@@ -25,24 +25,8 @@
     size_hint: [.2, .2]
     # size: [100, 100]
 
-<EventBottomLayout@AnchorLayout>:
-    anchor_x: 'right'
-    anchor_y: 'bottom'
 
-    # To Do: 'padding' needs to be relative!
-    padding: ('10dp', '10dp', '10dp', '10dp')
-
-    adaptive_size: True
-
-    MDRaisedButton:
-    # To Do: move button to right.
-        text: 'Next'
-        size: .5 * self.parent.width, .5 * self.parent.height
-        on_release: app.root.forward()
-
-
-# Root of UI, referenced in py code.
-EventCard:
+<CardScreen>:
 
     toolbar: toolbar
     title: title
@@ -82,5 +66,13 @@ EventCard:
             font_style: "H5"
             theme_text_color: "Primary"
 
-        EventBottomLayout:
-            id: footer
+#        EventBottomLayout:
+    MDBottomAppBar:
+
+        MDToolbar:
+            title: "Title"
+            icon: "arrow-right-circle"
+            type: "bottom"
+            left_action_items: [["menu", lambda x: x]]
+            mode: "end"
+            on_action_button: app.forward()

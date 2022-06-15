@@ -1,24 +1,12 @@
-from dataclasses import dataclass, asdict
-
 import csv
 import random
 import os
 
+from common import Card
+
+
 CSV_FILE = ".chaos.csv"
 CSV_INIT = [['1', 'CHAOS', 'Event Deck', 'Choose CSV File to Build Deck', 'Nav Bar: Back, Shuffle, Forward']]
-
-
-@dataclass()
-class Card:
-    """ Fields of CSV Header """
-    Weight: int = None
-    Toolbar: str = None
-    Title: str = None
-    Body: str = None
-    Extra: str = None
-
-    def fieldnames(self):
-        return tuple(asdict(self).keys())
 
 
 # Card deck.
@@ -93,7 +81,8 @@ class Deck(list):
         return self.get_card(self.index-1)
 
     def shuffle(self):
-        random.shuffle(self)
+        """ Random shuffle of cards, excluding top card """
+        random.shuffle(self[1:])
 
     def get_card(self, index):
 

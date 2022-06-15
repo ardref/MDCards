@@ -1,10 +1,14 @@
 from kivymd.app import MDApp
+from kivy.uix.screenmanager import ScreenManager, Screen, CardTransition
 from kivy.factory import Factory
 from kivy.uix.popup import Popup
 from kivy.uix.floatlayout import FloatLayout
 from kivy.properties import ObjectProperty
 from kivy.logger import Logger, LOG_LEVELS
+from random import shuffle
+
 from deck import deck
+from common import Card
 
 import os.path
 
@@ -19,8 +23,8 @@ class LoadDialog(FloatLayout):
     cancel = ObjectProperty(None)
 
 
-class EventCard(FloatLayout):
-    """ Root Rule in KV file """
+class CardScreen(Screen):
+    """ Common Screen for all cards """
 
     toolbar = ObjectProperty(None)
     title = ObjectProperty(None)
@@ -28,7 +32,7 @@ class EventCard(FloatLayout):
     extra = ObjectProperty(None)
 
     def __init__(self, **kwargs):
-        super().__init__()
+        super().__init__(**kwargs)
         self._popup = None
 
     def dismiss_popup(self):
@@ -47,19 +51,7 @@ class EventCard(FloatLayout):
 
         self.dismiss_popup()
 
-    def forward(self):
-        card = deck.forward()
-        self.show_card(card)
-
-    def backward(self):
-        card = deck.backward()
-        self.show_card(card)
-
-    def show_card(self, card=None):
-        """ Display given card; default is top card """
-
-        if card is None:
-            card = deck.get_card(0)
+    def fill(self, card):
 
         self.toolbar.title = card.Toolbar
         self.title.text = card.Title
@@ -73,17 +65,44 @@ class ChaosApp(MDApp):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
+        self.sm = ScreenManager(transition=CardTransition())
+        self.top_card = Card(Weight=1, Toolbar='TEST', Title='Title', Body='Body', Extra='Extra')
+
+    def make_screen(self, index, card):
+        screen = CardScreen(name=f'Card {index}')
+        screen.fill(card)
+        self.sm.add_widget(screen)  # 'screen' inserted at head of self.sm.screens list.
+
     def build(self):
         self.title = 'CHAnce Organising System'
 
         deck.build_deck()
 
-        self.root.show_card()
+        # Returns the screen manager.
 
-        return
+        self.sm.clear_widgets()
+
+        for index, card in enumerate(deck):
+            self.make_screen(index, card)
+
+        # N.B.: NOT recommended!
+        shuffle(self.sm.screens)
+
+        self.make_screen(0, self.top_card)
+
+        self.sm.current = 'Card 0'
+
+        # 'root' reference in .kv file.
+        return self.sm
+
+    def forward(self):
+        self.sm.current = self.sm.next()
+
+    def backward(self):
+        self.sm.current = self.sm.previous()
 
 
-Factory.register('EventCard', cls=EventCard)
+# Factory.register('EventCard', cls=EventCard)
 Factory.register('LoadDialog', cls=LoadDialog)
 
 
