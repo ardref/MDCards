@@ -15,11 +15,11 @@
             height: 30
             Button:
                 text: "Cancel"
-                on_release: root.cancel()
+                on_release: app.cancel()
 
             Button:
                 text: "Load"
-                on_release: root.load(filechooser.path, filechooser.selection)
+                on_release: app.load(filechooser.path, filechooser.selection)
 
 <NextCardButton@MDRaisedButton>:
     size_hint: [.2, .2]
@@ -43,7 +43,7 @@
             id: toolbar
             title: "Toolbar"
             elevation: 10
-            right_action_items: [['import', lambda x: root.load_dialog()]]
+            right_action_items: [['import', lambda x: app.load_dialog()]]
 
         MDLabel
             id: title

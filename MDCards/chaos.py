@@ -5,7 +5,6 @@ from kivy.uix.popup import Popup
 from kivy.uix.floatlayout import FloatLayout
 from kivy.properties import ObjectProperty
 from kivy.logger import Logger, LOG_LEVELS
-from random import shuffle
 
 from deck import deck
 from common import Card
@@ -33,23 +32,6 @@ class CardScreen(Screen):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._popup = None
-
-    def dismiss_popup(self):
-        self._popup.dismiss()
-
-    def load_dialog(self):
-        content = LoadDialog(load=self.load, cancel=self.dismiss_popup)
-        self._popup = Popup(title="Load file", content=content, size_hint=(0.6, 0.6))
-        self._popup.open()
-
-    def load(self, directory, filename):
-        pathname = os.path.join(directory, filename[0])
-        if len(pathname) > 0:
-            deck.load(pathname)
-            self.show_card()
-
-        self.dismiss_popup()
 
     def fill(self, card):
 
@@ -65,8 +47,30 @@ class ChaosApp(MDApp):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
+        self.card_count = deck.build_deck()
         self.sm = ScreenManager(transition=CardTransition())
-        self.top_card = Card(Weight=1, Toolbar='TEST', Title='Title', Body='Body', Extra='Extra')
+        self.top_card = Card(Weight=1, Toolbar='TEST', Title='Title', Body='Body', Extra=f'Total: {self.card_count}')
+
+        self._popup = None
+
+    def dismiss_popup(self):
+        self._popup.dismiss()
+
+    def load_dialog(self):
+        content = LoadDialog(load=self.load, cancel=self.dismiss_popup)
+        self._popup = Popup(title="Load file", content=content, size_hint=(0.6, 0.6))
+        self._popup.open()
+
+    def load(self, directory, filename):
+        pathname = os.path.join(directory, filename[0])
+        if len(pathname) > 0:
+            deck.load(pathname)
+            self.sm.current = 'Card 0'
+
+        self.cancel()
+
+    def cancel(self):
+        self.dismiss_popup()
 
     def make_screen(self, index, card):
         screen = CardScreen(name=f'Card {index}')
@@ -76,24 +80,23 @@ class ChaosApp(MDApp):
     def build(self):
         self.title = 'CHAnce Organising System'
 
-        deck.build_deck()
+        self.reset()
 
-        # Returns the screen manager.
+        # 'root' reference in .kv file.
+        return self.sm
 
+    def reset(self):
         self.sm.clear_widgets()
+
+        deck.shuffle()
 
         for index, card in enumerate(deck):
             self.make_screen(index, card)
 
-        # N.B.: NOT recommended!
-        shuffle(self.sm.screens)
-
+        # LIFO - puts card at head of 'screens' list.
         self.make_screen(0, self.top_card)
 
         self.sm.current = 'Card 0'
-
-        # 'root' reference in .kv file.
-        return self.sm
 
     def forward(self):
         self.sm.current = self.sm.next()

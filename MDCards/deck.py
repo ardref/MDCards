@@ -62,6 +62,8 @@ class Deck(list):
                 card.Weight = weight
                 self.append(card)
 
+        return len(data)
+
     def load(self, pathname):
         """ Load data from CSV file """
 
@@ -81,8 +83,8 @@ class Deck(list):
         return self.get_card(self.index-1)
 
     def shuffle(self):
-        """ Random shuffle of cards, excluding top card """
-        random.shuffle(self[1:])
+        """ Random shuffle of cards """
+        random.shuffle(self)
 
     def get_card(self, index):
 
