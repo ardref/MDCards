@@ -41,17 +41,11 @@ class CardScreen(Screen):
         self.extra.text = card.Extra
 
 
-class ChaosApp(MDApp):
-    """ Kivy app to manage 'Event Cards' """
+class FilePopup():
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-        self.card_count = deck.build_deck()
-        self.sm = ScreenManager(transition=CardTransition())
-        self.top_card = Card(Weight=1, Toolbar='TEST', Title='Title', Body='Body', Extra=f'Total: {self.card_count}')
-
+    def __init__(self, app):
         self._popup = None
+        self.app = app
 
     def dismiss_popup(self):
         self._popup.dismiss()
@@ -65,12 +59,25 @@ class ChaosApp(MDApp):
         pathname = os.path.join(directory, filename[0])
         if len(pathname) > 0:
             deck.load(pathname)
-            self.sm.current = 'Card 0'
+            self.app.reset()
 
         self.cancel()
 
     def cancel(self):
         self.dismiss_popup()
+
+
+class ChaosApp(MDApp):
+    """ Kivy app to manage 'Event Cards' """
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        self.card_count = deck.build_deck()
+        self.sm = ScreenManager(transition=CardTransition())
+        self.top_card = Card(Weight=1, Toolbar='TEST', Title='Title', Body='Body', Extra=f'Total: {self.card_count}')
+
+        self.file_popup = FilePopup(self)
 
     def make_screen(self, index, card):
         screen = CardScreen(name=f'Card {index}')
